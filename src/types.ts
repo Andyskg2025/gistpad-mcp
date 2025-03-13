@@ -39,6 +39,23 @@ export interface Gist {
 
 // MCP / GistPad server types
 
+export interface ResourceNotification {
+    type: "add" | "delete";
+    resourceType: "gist";
+    resourceId: string;
+}
+
+export interface GistHandlerContext {
+    fetchAllGists: () => Promise<Gist[]>;
+    fetchStarredGists: () => Promise<Gist[]>;
+    dailyNotesGistId: string | null;
+
+    updateGistInCache: (gist: Gist) => void;
+    addGistToCache: (gist: Gist) => void;
+    removeGistFromCache: (gistId: string) => void;
+    invalidateCache: () => void;
+}
+
 export interface RequestContext {
     server: Server;
     gistStore: YourGistStore;
@@ -47,21 +64,27 @@ export interface RequestContext {
     includeArchived: boolean;
     includeStarred: boolean;
     includeDaily: boolean;
+
+    addStarredGist: (gist: Gist) => void;
+    removeStarredGist: (gistId: string) => void;
+
+    // Method to trigger resource notifications when gists are added/deleted
+    notifyResourceChange?: (notification: ResourceNotification) => void;
 }
 
-export type ToolHandler = (
-    args: Record<string, unknown>,
-    context: RequestContext
-) => Promise<any>;
+export interface RequestWithParams {
+    params: {
+        name: string;
+        arguments?: Record<string, unknown>;
+    };
+}
+export type ToolHandler = (params: any, context: RequestContext) => Promise<any>;
 
+// Define ToolDefinition type or import it if it exists elsewhere
 export type ToolDefinition = {
     name: string;
-    description: string;
-    inputSchema: {
-        type: "object";
-        properties: Record<string, unknown>;
-        required: string[];
-    };
+    description?: string;
+    parameters?: Record<string, unknown>;
 };
 
 export interface ToolModule {

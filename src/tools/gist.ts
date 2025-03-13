@@ -161,15 +161,45 @@ export default {
 
             context.gistStore.add(gist);
 
+<<<<<<< HEAD
             return mcpGist(gist);
+=======
+            // Trigger resource notification for gist creation
+            context.notifyResourceChange?.({
+                type: "add",
+                resourceType: "gist",
+                resourceId: response.data.id
+            });
+
+            return {
+                id: response.data.id,
+                url: `https://gistpad.dev/#/${response.data.id}`,
+                description,
+            };
+>>>>>>> 7c94210 (Add resource list notifications for gist operations)
         },
 
         delete_gist: async ({ id }, context) => {
             await context.axiosInstance.delete(`/${id}`);
 
+<<<<<<< HEAD
             context.gistStore.remove(id as string);
 
             return "Successfully deleted gist";
+=======
+            context.removeGistFromCache(gistId);
+
+            // Trigger resource notification for gist deletion
+            context.notifyResourceChange?.({
+                type: "delete",
+                resourceType: "gist", 
+                resourceId: gistId
+            });
+
+            return {
+                message: "Successfully deleted gist",
+            };
+>>>>>>> 7c94210 (Add resource list notifications for gist operations)
         },
 
         update_gist_description: async ({ id, description }, context) => {
