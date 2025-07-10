@@ -171,6 +171,13 @@ export default {
                 resourceId: response.data.id
             });
 
+            // Trigger resource notification for gist creation
+            context.notifyResourceChange?.({
+                type: "add",
+                resourceType: "gist",
+                resourceId: response.data.id
+            });
+
             return {
                 id: response.data.id,
                 url: `https://gistpad.dev/#/${response.data.id}`,
@@ -187,6 +194,15 @@ export default {
 
             return "Successfully deleted gist";
 =======
+            context.removeGistFromCache(gistId);
+
+            // Trigger resource notification for gist deletion
+            context.notifyResourceChange?.({
+                type: "delete",
+                resourceType: "gist", 
+                resourceId: gistId
+            });
+
             context.removeGistFromCache(gistId);
 
             // Trigger resource notification for gist deletion
